@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -12,11 +16,45 @@ import (
 )
 
 func main() {
+	staticOut := flag.String("static", "", "render static HTML to this file and exit")
+	flag.Parse()
+
+	if *staticOut != "" {
+		if err := renderStatic(*staticOut); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
+
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("example/assets"))))
 	http.HandleFunc("/events/", handleEvent)
 	http.HandleFunc("/", handleIndex)
 	log.Println("listening on :8090")
 	log.Fatal(http.ListenAndServe(":8090", nil))
+}
+
+func renderStatic(out string) error {
+	now := time.Now()
+	year, month := now.Year(), now.Month()
+	calProps := calendar.Props{
+		Year:        year,
+		Month:       month,
+		Location:    time.Local,
+		Events:      exampleEvents(year, month),
+		HideHeading: true,
+	}
+	navProps := calendar.NavigatorProps{Year: year, Month: month}
+	jumperProps := calendar.JumperProps{Year: year, Month: month}
+
+	if err := os.MkdirAll(filepath.Dir(out), 0755); err != nil {
+		return err
+	}
+	f, err := os.Create(out)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	return indexPage(calProps, navProps, jumperProps).Render(context.Background(), f)
 }
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
