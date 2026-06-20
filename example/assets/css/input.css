@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@source "../../../calendar/**/*.templ";
-@source "../../**/*.templ";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
