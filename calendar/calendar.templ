@@ -8,13 +8,15 @@ import (
 type Event struct {
 	ID    string
 	Title string
-	Date  time.Time
+	Start time.Time
+	End   time.Time
 }
 
 type Props struct {
-	Year   int
-	Month  time.Month
-	Events []Event
+	Year     int
+	Month    time.Month
+	Events   []Event
+	Location *time.Location
 }
 
 func daysInMonth(year int, month time.Month) int {
@@ -32,10 +34,15 @@ func trailingDays(year int, month time.Month) int {
 	return rows*7 - total
 }
 
-func eventsForDay(events []Event, year int, month time.Month, day int) []Event {
+func eventsForDay(events []Event, year int, month time.Month, day int, loc *time.Location) []Event {
+	if loc == nil {
+		loc = time.Local
+	}
+	dayStart := time.Date(year, month, day, 0, 0, 0, 0, loc)
+	dayEnd := time.Date(year, month, day+1, 0, 0, 0, 0, loc)
 	var result []Event
 	for _, e := range events {
-		if e.Date.Year() == year && e.Date.Month() == month && e.Date.Day() == day {
+		if e.Start.Before(dayEnd) && e.End.After(dayStart) {
 			result = append(result, e)
 		}
 	}
@@ -90,7 +97,7 @@ templ dayCell(props Props, day int) {
 				{ fmt.Sprintf("%d", day) }
 			</div>
 		}
-		for _, event := range eventsForDay(props.Events, props.Year, props.Month, day) {
+		for _, event := range eventsForDay(props.Events, props.Year, props.Month, day, props.Location) {
 			<div class="mb-0.5 truncate rounded px-1 py-0.5 text-xs bg-primary/10 text-primary">
 				{ event.Title }
 			</div>
