@@ -11,12 +11,7 @@ tasks:
   tailwind:
     desc: Watch Tailwind CSS changes
     cmds:
-      - |
-        printf '%s\n' \
-          '@source "../../../calendar/**/*.templ";' \
-          '@source "../../**/*.templ";' \
-          > ./example/assets/css/sources.generated.css && \
-        tailwindcss -i ./example/assets/css/input.css -o ./example/assets/css/output.css --watch
+      - tailwindcss -i ./example/assets/css/input.css -o ./example/assets/css/output.css --watch
 
   dev:
     desc: Start development server with hot reload
