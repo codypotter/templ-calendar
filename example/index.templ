@@ -10,11 +10,40 @@ templ indexPage(props calendar.Props) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>templ-calendar</title>
 			<link rel="stylesheet" href="/assets/css/output.css"/>
+			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 		</head>
 		<body>
-			<div class="max-w-4xl mx-auto p-8">
+			<div class="max-w-4xl mx-auto p-8" x-data="calendarApp()">
 				@calendar.Calendar(props)
+				<!-- htmx event detail target -->
+				<div id="event-detail" class="mt-4 text-sm text-muted-foreground"></div>
+				<!-- alpine popover -->
+				<div
+					x-show="selectedEvent !== null"
+					x-cloak
+					class="fixed inset-0 flex items-center justify-center bg-black/40"
+					@click.self="selectedEvent = null"
+				>
+					<div class="bg-card rounded-lg border border-border p-6 shadow-lg min-w-64">
+						<p class="font-semibold text-card-foreground mb-1" x-text="selectedEvent?.title"></p>
+						<p class="text-sm text-muted-foreground" x-text="selectedEvent?.id"></p>
+						<button class="mt-4 text-sm text-primary hover:underline" @click="selectedEvent = null">Close</button>
+					</div>
+				</div>
 			</div>
+			<script>
+				function calendarApp() {
+					return {
+						selectedEvent: null,
+						openEvent(el) {
+							this.selectedEvent = {
+								id: el.dataset.eventId,
+								title: el.dataset.eventTitle,
+							}
+						}
+					}
+				}
+			</script>
 		</body>
 	</html>
 }

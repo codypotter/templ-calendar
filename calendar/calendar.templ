@@ -6,10 +6,12 @@ import (
 )
 
 type Event struct {
-	ID    string
-	Title string
-	Start time.Time
-	End   time.Time
+	ID         string
+	Title      string
+	Start      time.Time
+	End        time.Time
+	Class      string
+	Attributes templ.Attributes
 }
 
 type Props struct {
@@ -98,7 +100,7 @@ templ dayCell(props Props, day int) {
 			</div>
 		}
 		for _, event := range eventsForDay(props.Events, props.Year, props.Month, day, props.Location) {
-			<div class="mb-0.5 truncate rounded px-1 py-0.5 text-xs bg-primary/10 text-primary">
+			<div class={ templ.Classes("mb-0.5 truncate rounded px-1 py-0.5 text-xs bg-primary/10 text-primary", event.Class) } { event.Attributes... }>
 				{ event.Title }
 			</div>
 		}
