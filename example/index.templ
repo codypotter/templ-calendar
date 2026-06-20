@@ -2,7 +2,7 @@ package main
 
 import "github.com/codypotter/templ-calendar/calendar"
 
-templ indexPage(props calendar.Props) {
+templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -10,11 +10,15 @@ templ indexPage(props calendar.Props) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>templ-calendar</title>
 			<link rel="stylesheet" href="/assets/css/output.css"/>
+			<script src="https://unpkg.com/htmx.org@2/dist/htmx.min.js"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 		</head>
 		<body>
 			<div class="max-w-4xl mx-auto p-8" x-data="calendarApp()">
-				@calendar.Calendar(props)
+				<div id="calendar-container">
+					@calendar.Navigator(navProps)
+					@calendar.Calendar(calProps)
+				</div>
 				<!-- htmx event detail target -->
 				<div id="event-detail" class="mt-4 text-sm text-muted-foreground"></div>
 				<!-- alpine popover -->
