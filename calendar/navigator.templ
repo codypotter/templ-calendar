@@ -1,0 +1,31 @@
+package calendar
+
+import (
+	"fmt"
+	"time"
+)
+
+type NavigatorProps struct {
+	Year           int
+	Month          time.Month
+	PrevAttributes templ.Attributes
+	NextAttributes templ.Attributes
+}
+
+templ Navigator(props NavigatorProps) {
+	<div class="flex items-center justify-between mb-4">
+		<button class="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors" { props.PrevAttributes... }>
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="m15 18-6-6 6-6"></path>
+			</svg>
+		</button>
+		<span class="text-sm font-medium text-foreground">
+			{ fmt.Sprintf("%s %d", props.Month.String(), props.Year) }
+		</span>
+		<button class="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors" { props.NextAttributes... }>
+			<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="m9 18 6-6-6-6"></path>
+			</svg>
+		</button>
+	</div>
+}
