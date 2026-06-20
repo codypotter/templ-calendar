@@ -15,10 +15,11 @@ type Event struct {
 }
 
 type Props struct {
-	Year     int
-	Month    time.Month
-	Events   []Event
-	Location *time.Location
+	Year        int
+	Month       time.Month
+	Events      []Event
+	Location    *time.Location
+	HideHeading bool
 }
 
 func daysInMonth(year int, month time.Month) int {
@@ -58,11 +59,13 @@ func isToday(year int, month time.Month, day int) bool {
 
 templ Calendar(props Props) {
 	<div class="w-full">
-		<div class="mb-4 px-1">
-			<h2 class="text-base font-semibold text-foreground">
-				{ fmt.Sprintf("%s %d", props.Month.String(), props.Year) }
-			</h2>
-		</div>
+		if !props.HideHeading {
+			<div class="mb-4 px-1">
+				<h2 class="text-base font-semibold text-foreground">
+					{ fmt.Sprintf("%s %d", props.Month.String(), props.Year) }
+				</h2>
+			</div>
+		}
 		<div class="grid grid-cols-7 mb-1">
 			for _, name := range []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"} {
 				<div class="py-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
