@@ -50,18 +50,18 @@ func isToday(year int, month time.Month, day int) bool {
 templ Calendar(props Props) {
 	<div class="w-full">
 		<div class="mb-4 px-1">
-			<h2 class="text-base font-semibold text-gray-900">
+			<h2 class="text-base font-semibold text-foreground">
 				{ fmt.Sprintf("%s %d", props.Month.String(), props.Year) }
 			</h2>
 		</div>
 		<div class="grid grid-cols-7 mb-1">
 			for _, name := range []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"} {
-				<div class="py-2 text-center text-xs font-medium uppercase tracking-wide text-gray-500">
+				<div class="py-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
 					{ name }
 				</div>
 			}
 		</div>
-		<div class="grid grid-cols-7 gap-px rounded-lg overflow-hidden bg-gray-200 border border-gray-200">
+		<div class="grid grid-cols-7 gap-px rounded-lg overflow-hidden bg-border border border-border">
 			@calendarGrid(props)
 		</div>
 	</div>
@@ -69,29 +69,29 @@ templ Calendar(props Props) {
 
 templ calendarGrid(props Props) {
 	for i := 0; i < int(firstWeekday(props.Year, props.Month)); i++ {
-		<div class="min-h-24 bg-gray-50 p-2"></div>
+		<div class="min-h-24 bg-muted p-2"></div>
 	}
 	for day := 1; day <= daysInMonth(props.Year, props.Month); day++ {
 		@dayCell(props, day)
 	}
 	for i := 0; i < trailingDays(props.Year, props.Month); i++ {
-		<div class="min-h-24 bg-gray-50 p-2"></div>
+		<div class="min-h-24 bg-muted p-2"></div>
 	}
 }
 
 templ dayCell(props Props, day int) {
-	<div class="min-h-24 bg-white p-2">
+	<div class="min-h-24 bg-card p-2">
 		if isToday(props.Year, props.Month, day) {
-			<div class="mb-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white">
+			<div class="mb-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
 				{ fmt.Sprintf("%d", day) }
 			</div>
 		} else {
-			<div class="mb-1 text-sm font-medium text-gray-900">
+			<div class="mb-1 text-sm font-medium text-card-foreground">
 				{ fmt.Sprintf("%d", day) }
 			</div>
 		}
 		for _, event := range eventsForDay(props.Events, props.Year, props.Month, day) {
-			<div class="mb-0.5 truncate rounded px-1 py-0.5 text-xs bg-blue-100 text-blue-800">
+			<div class="mb-0.5 truncate rounded px-1 py-0.5 text-xs bg-primary/10 text-primary">
 				{ event.Title }
 			</div>
 		}
