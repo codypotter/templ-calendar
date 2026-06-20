@@ -5,6 +5,18 @@ import (
 	"time"
 )
 
+type Event struct {
+	ID    string
+	Title string
+	Date  time.Time
+}
+
+type Props struct {
+	Year   int
+	Month  time.Month
+	Events []Event
+}
+
 func daysInMonth(year int, month time.Month) int {
 	return time.Date(year, month+1, 0, 0, 0, 0, 0, time.UTC).Day()
 }
