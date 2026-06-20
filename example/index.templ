@@ -1,6 +1,99 @@
 package main
 
-import "github.com/codypotter/templ-calendar/calendar"
+import (
+	"html"
+
+	"github.com/codypotter/templ-calendar/calendar"
+)
+
+func code(s string) templ.Component {
+	return templ.Raw(html.EscapeString(s))
+}
+
+
+const codeInstall = `go install github.com/codypotter/templ-calendar/cmd/templ-calendar@latest`
+
+const codeGettingStarted = `templ-calendar add calendar ./components/calendar
+templ-calendar add navigator ./components/calendar
+templ-calendar add jumper ./components/calendar
+
+templ generate`
+
+const codeCalendar = `@calendar.Calendar(calendar.Props{
+    Year:        2026,
+    Month:       time.June,
+    Location:    time.Local,
+    HideHeading: false,
+    Events: []calendar.Event{
+        {
+            ID:    "1",
+            Title: "Sprint review",
+            Start: time.Date(2026, time.June, 15, 14, 0, 0, 0, time.Local),
+            End:   time.Date(2026, time.June, 17, 15, 0, 0, 0, time.Local),
+        },
+    },
+})`
+
+const codeNavigator = `@calendar.Navigator(calendar.NavigatorProps{
+    Year:  2026,
+    Month: time.June,
+    PrevAttributes: templ.Attributes{
+        "hx-get":    "/?year=2026&month=5",
+        "hx-target": "#calendar-container",
+        "hx-select": "#calendar-container",
+        "hx-swap":   "outerHTML",
+    },
+    NextAttributes: templ.Attributes{
+        "hx-get":    "/?year=2026&month=7",
+        "hx-target": "#calendar-container",
+        "hx-select": "#calendar-container",
+        "hx-swap":   "outerHTML",
+    },
+})`
+
+const codeJumper = `@calendar.Jumper(calendar.JumperProps{
+    Year:  2026,
+    Month: time.June,
+    FormAttributes: templ.Attributes{
+        "hx-get":     "/",
+        "hx-target":  "#calendar-container",
+        "hx-select":  "#calendar-container",
+        "hx-swap":    "outerHTML",
+        "hx-trigger": "change",
+    },
+})`
+
+
+templ themeInit() {
+	<script>
+		(function() {
+			var stored = localStorage.getItem('theme');
+			if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			}
+		})();
+	</script>
+}
+
+templ appScripts() {
+	<script>
+		function toggleTheme() {
+			var isDark = document.documentElement.classList.toggle('dark');
+			localStorage.setItem('theme', isDark ? 'dark' : 'light');
+		}
+		function calendarApp() {
+			return {
+				selectedEvent: null,
+				openEvent: function(el) {
+					this.selectedEvent = {
+						id: el.dataset.eventId,
+						title: el.dataset.eventTitle,
+					};
+				},
+			};
+		}
+	</script>
+}
 
 templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps, jumperProps calendar.JumperProps) {
 	<!DOCTYPE html>
@@ -10,74 +103,88 @@ templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps, jumpe
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>templ-calendar</title>
 			<link rel="stylesheet" href="assets/css/output.css"/>
-			<script>
-				(function() {
-					const stored = localStorage.getItem('theme');
-					if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-						document.documentElement.classList.add('dark');
-					}
-				})();
-			</script>
+			@themeInit()
+			@appScripts()
 			<script src="https://unpkg.com/htmx.org@2/dist/htmx.min.js"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3/dist/cdn.min.js"></script>
 		</head>
-		<body class="bg-background">
-			<div class="max-w-4xl mx-auto p-8" x-data="calendarApp()">
-				<div class="flex justify-end mb-4">
+		<body class="bg-background text-foreground">
+			<div class="max-w-3xl mx-auto px-6 py-12" x-data="calendarApp()">
+				<!-- header -->
+				<div class="flex items-start justify-between mb-12">
+					<div>
+						<h1 class="text-2xl font-bold text-foreground mb-1">templ-calendar</h1>
+						<p class="text-muted-foreground">Calendar components for <a href="https://github.com/a-h/templ" class="text-primary hover:underline">a-h/templ</a>. Copy the source into your project and bring your own Tailwind build.</p>
+					</div>
 					<button
 						onclick="toggleTheme()"
-						class="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+						class="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors shrink-0"
 						aria-label="Toggle theme"
 					>
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<circle cx="12" cy="12" r="4"></circle>
-							<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
-						</svg>
-						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-						</svg>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
 					</button>
 				</div>
-				<div id="calendar-container">
-					<div class="flex items-center justify-between mb-4">
+				<!-- install -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Install</h2>
+					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeInstall)</pre>
+				</section>
+				<!-- getting started -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Getting started</h2>
+					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeGettingStarted)</pre>
+				</section>
+				<!-- live demo -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Demo</h2>
+					<p class="text-sm text-muted-foreground mb-4">Click the violet event to see an HTMX interaction. Click "Lunch with design" or "Retro" to see Alpine popovers.</p>
+					<div id="calendar-container">
+						<div class="flex items-center justify-between mb-4">
+							@calendar.Navigator(navProps)
+							@calendar.Jumper(jumperProps)
+						</div>
+						@calendar.Calendar(calProps)
+					</div>
+					<div id="event-detail" class="mt-3 text-sm text-muted-foreground"></div>
+					<div
+						x-show="selectedEvent !== null"
+						x-cloak
+						class="fixed inset-0 flex items-center justify-center bg-black/40"
+						x-on:click.self="selectedEvent = null"
+					>
+						<div class="bg-card rounded-lg border border-border p-6 shadow-lg min-w-64">
+							<p class="font-semibold text-card-foreground mb-1" x-text="selectedEvent?.title"></p>
+							<p class="text-sm text-muted-foreground" x-text="selectedEvent?.id"></p>
+							<button class="mt-4 text-sm text-primary hover:underline" x-on:click="selectedEvent = null">Close</button>
+						</div>
+					</div>
+				</section>
+				<!-- calendar -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Calendar</h2>
+					<div class="border border-border rounded-lg p-4 mb-3">
+						@calendar.Calendar(calProps)
+					</div>
+					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeCalendar)</pre>
+				</section>
+				<!-- navigator -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Navigator</h2>
+					<div class="border border-border rounded-lg p-4 mb-3">
 						@calendar.Navigator(navProps)
+					</div>
+					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeNavigator)</pre>
+				</section>
+				<!-- jumper -->
+				<section class="mb-12">
+					<h2 class="text-base font-semibold mb-3">Jumper</h2>
+					<div class="border border-border rounded-lg p-4 mb-3">
 						@calendar.Jumper(jumperProps)
 					</div>
-					@calendar.Calendar(calProps)
-				</div>
-				<!-- htmx event detail target -->
-				<div id="event-detail" class="mt-4 text-sm text-muted-foreground"></div>
-				<!-- alpine popover -->
-				<div
-					x-show="selectedEvent !== null"
-					x-cloak
-					class="fixed inset-0 flex items-center justify-center bg-black/40"
-					@click.self="selectedEvent = null"
-				>
-					<div class="bg-card rounded-lg border border-border p-6 shadow-lg min-w-64">
-						<p class="font-semibold text-card-foreground mb-1" x-text="selectedEvent?.title"></p>
-						<p class="text-sm text-muted-foreground" x-text="selectedEvent?.id"></p>
-						<button class="mt-4 text-sm text-primary hover:underline" @click="selectedEvent = null">Close</button>
-					</div>
-				</div>
+					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeJumper)</pre>
+				</section>
 			</div>
-			<script>
-				function toggleTheme() {
-					const isDark = document.documentElement.classList.toggle('dark');
-					localStorage.setItem('theme', isDark ? 'dark' : 'light');
-				}
-				function calendarApp() {
-					return {
-						selectedEvent: null,
-						openEvent(el) {
-							this.selectedEvent = {
-								id: el.dataset.eventId,
-								title: el.dataset.eventTitle,
-							}
-						}
-					}
-				}
-			</script>
 		</body>
 	</html>
 }
