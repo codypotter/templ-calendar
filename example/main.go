@@ -105,7 +105,7 @@ func exampleEvents(year int, month time.Month) []calendar.Event {
 			Title: "Sprint review",
 			Start: time.Date(year, month, 15, 14, 0, 0, 0, time.Local),
 			End:   time.Date(year, month, 17, 15, 0, 0, 0, time.Local),
-			Class: "cursor-pointer hover:opacity-75",
+			Class: "cursor-pointer hover:opacity-75 bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200",
 			Attributes: templ.Attributes{
 				"hx-get":    "/events/2",
 				"hx-target": "#event-detail",
