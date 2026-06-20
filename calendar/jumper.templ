@@ -1,0 +1,41 @@
+package calendar
+
+import (
+	"fmt"
+	"time"
+)
+
+type JumperProps struct {
+	Year           int
+	Month          time.Month
+	FormAttributes templ.Attributes
+}
+
+var monthNames = []time.Month{
+	time.January, time.February, time.March, time.April,
+	time.May, time.June, time.July, time.August,
+	time.September, time.October, time.November, time.December,
+}
+
+templ Jumper(props JumperProps) {
+	<form { props.FormAttributes... }>
+		<div class="flex items-center gap-2">
+			<select
+				name="month"
+				class="rounded-md border border-input bg-card text-card-foreground px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+			>
+				for _, m := range monthNames {
+					<option value={ fmt.Sprintf("%d", int(m)) } selected?={ props.Month == m }>
+						{ m.String() }
+					</option>
+				}
+			</select>
+			<input
+				type="number"
+				name="year"
+				value={ fmt.Sprintf("%d", props.Year) }
+				class="w-20 rounded-md border border-input bg-card text-card-foreground px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+			/>
+		</div>
+	</form>
+}

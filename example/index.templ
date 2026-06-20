@@ -2,7 +2,7 @@ package main
 
 import "github.com/codypotter/templ-calendar/calendar"
 
-templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps) {
+templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps, jumperProps calendar.JumperProps) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
@@ -16,7 +16,10 @@ templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps) {
 		<body>
 			<div class="max-w-4xl mx-auto p-8" x-data="calendarApp()">
 				<div id="calendar-container">
-					@calendar.Navigator(navProps)
+					<div class="flex items-center justify-between mb-4">
+						@calendar.Navigator(navProps)
+						@calendar.Jumper(jumperProps)
+					</div>
 					@calendar.Calendar(calProps)
 				</div>
 				<!-- htmx event detail target -->

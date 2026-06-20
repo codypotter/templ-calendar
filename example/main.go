@@ -13,6 +13,7 @@ import (
 
 func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("example/assets"))))
+	http.HandleFunc("/events/", handleEvent)
 	http.HandleFunc("/", handleIndex)
 	log.Println("listening on :8090")
 	log.Fatal(http.ListenAndServe(":8090", nil))
@@ -42,13 +43,31 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	calProps := calendar.Props{
-		Year:     year,
-		Month:    month,
-		Location: time.Local,
-		Events:   exampleEvents(year, month),
+		Year:        year,
+		Month:       month,
+		Location:    time.Local,
+		Events:      exampleEvents(year, month),
+		HideHeading: true,
 	}
 
-	templ.Handler(indexPage(calProps, navProps)).ServeHTTP(w, r)
+	jumperProps := calendar.JumperProps{
+		Year:  year,
+		Month: month,
+		FormAttributes: templ.Attributes{
+			"hx-get":     "/",
+			"hx-target":  "#calendar-container",
+			"hx-select":  "#calendar-container",
+			"hx-swap":    "outerHTML",
+			"hx-trigger": "change",
+		},
+	}
+
+	templ.Handler(indexPage(calProps, navProps, jumperProps)).ServeHTTP(w, r)
+}
+
+func handleEvent(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/events/"):]
+	fmt.Fprintf(w, `<p>Event <strong>%s</strong> detail would go here.</p>`, id)
 }
 
 func parseMonthYear(r *http.Request) (int, time.Month) {
