@@ -1,0 +1,20 @@
+package main
+
+import "github.com/codypotter/templ-calendar/calendar"
+
+templ indexPage(props calendar.Props) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>templ-calendar</title>
+			<link rel="stylesheet" href="/assets/css/output.css"/>
+		</head>
+		<body>
+			<div class="max-w-4xl mx-auto p-8">
+				@calendar.Calendar(props)
+			</div>
+		</body>
+	</html>
+}
