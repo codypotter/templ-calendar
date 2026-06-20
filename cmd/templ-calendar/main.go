@@ -28,34 +28,36 @@ Run templ generate yourself after adding.`,
 	Args:      cobra.RangeArgs(1, 2),
 	ValidArgs: []string{"calendar", "navigator", "jumper"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		component := args[0]
 		dest := "."
 		if len(args) == 2 {
 			dest = args[1]
 		}
-
-		src, ok := components[component]
-		if !ok {
-			return fmt.Errorf("unknown component %q — run 'templ-calendar list' to see available components", component)
-		}
-
-		data, err := tc.Files.ReadFile(src)
-		if err != nil {
-			return fmt.Errorf("error reading component: %w", err)
-		}
-
-		if err := os.MkdirAll(dest, 0755); err != nil {
-			return fmt.Errorf("error creating destination: %w", err)
-		}
-
-		destFile := filepath.Join(dest, filepath.Base(src))
-		if err := os.WriteFile(destFile, data, 0644); err != nil {
-			return fmt.Errorf("error writing file: %w", err)
-		}
-
-		fmt.Printf("added %s → %s\n", component, destFile)
-		return nil
+		return runAdd(args[0], dest)
 	},
+}
+
+func runAdd(component, dest string) error {
+	src, ok := components[component]
+	if !ok {
+		return fmt.Errorf("unknown component %q — run 'templ-calendar list' to see available components", component)
+	}
+
+	data, err := tc.Files.ReadFile(src)
+	if err != nil {
+		return fmt.Errorf("error reading component: %w", err)
+	}
+
+	if err := os.MkdirAll(dest, 0755); err != nil {
+		return fmt.Errorf("error creating destination: %w", err)
+	}
+
+	destFile := filepath.Join(dest, filepath.Base(src))
+	if err := os.WriteFile(destFile, data, 0644); err != nil {
+		return fmt.Errorf("error writing file: %w", err)
+	}
+
+	fmt.Printf("added %s → %s\n", component, destFile)
+	return nil
 }
 
 var listCmd = &cobra.Command{
