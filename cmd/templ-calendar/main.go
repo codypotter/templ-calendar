@@ -26,11 +26,19 @@ var addCmd = &cobra.Command{
 	Long: `Copy a templ-calendar component into your project.
 Run templ generate yourself after adding.`,
 	Args:      cobra.RangeArgs(1, 2),
-	ValidArgs: []string{"calendar", "navigator", "jumper"},
+	ValidArgs: []string{"all", "calendar", "navigator", "jumper"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dest := "."
 		if len(args) == 2 {
 			dest = args[1]
+		}
+		if args[0] == "all" {
+			for name := range components {
+				if err := runAdd(name, dest); err != nil {
+					return err
+				}
+			}
+			return nil
 		}
 		return runAdd(args[0], dest)
 	},
@@ -65,6 +73,7 @@ var listCmd = &cobra.Command{
 	Short: "List available components",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Available components:")
+		fmt.Println("  all        all components")
 		fmt.Println("  calendar   monthly calendar grid")
 		fmt.Println("  navigator  prev/next month buttons")
 		fmt.Println("  jumper     month/year jump form")

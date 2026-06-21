@@ -11,11 +11,7 @@ func code(s string) templ.Component {
 }
 
 
-const codeInstall = `go install github.com/codypotter/templ-calendar/cmd/templ-calendar@latest`
-
-const codeGettingStarted = `templ-calendar add calendar ./components/calendar
-templ-calendar add navigator ./components/calendar
-templ-calendar add jumper ./components/calendar
+const codeGettingStarted = `go run github.com/codypotter/templ-calendar/cmd/templ-calendar@latest add all ./components/calendar
 
 templ generate`
 
@@ -125,11 +121,6 @@ templ indexPage(calProps calendar.Props, navProps calendar.NavigatorProps, jumpe
 						<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
 					</button>
 				</div>
-				<!-- install -->
-				<section class="mb-12">
-					<h2 class="text-base font-semibold mb-3">Install</h2>
-					<pre class="bg-muted rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">@code(codeInstall)</pre>
-				</section>
 				<!-- getting started -->
 				<section class="mb-12">
 					<h2 class="text-base font-semibold mb-3">Getting started</h2>

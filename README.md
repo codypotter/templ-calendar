@@ -4,19 +4,25 @@ Calendar components for [a-h/templ](https://github.com/a-h/templ). Styled with T
 
 **[Examples and full documentation →](https://codypotter.github.io/templ-calendar/)**
 
-## Install
-
-```sh
-go install github.com/codypotter/templ-calendar/cmd/templ-calendar@latest
-```
-
 ## Getting started
 
-```sh
-templ-calendar add calendar ./components/calendar
-templ-calendar add navigator ./components/calendar
-templ-calendar add jumper ./components/calendar
+Add all components at once:
 
+```sh
+go run github.com/codypotter/templ-calendar/cmd/templ-calendar@latest add all ./components/calendar
+```
+
+Or pick individual ones:
+
+```sh
+go run github.com/codypotter/templ-calendar/cmd/templ-calendar@latest add calendar ./components/calendar
+go run github.com/codypotter/templ-calendar/cmd/templ-calendar@latest add navigator ./components/calendar
+go run github.com/codypotter/templ-calendar/cmd/templ-calendar@latest add jumper ./components/calendar
+```
+
+Then run:
+
+```sh
 templ generate
 ```
 
