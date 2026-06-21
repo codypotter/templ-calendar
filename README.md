@@ -1,8 +1,8 @@
 # templ-calendar
 
-Calendar components for [a-h/templ](https://github.com/a-h/templ). Styled with Tailwind CSS — so BYO tailwind build.
+Calendar components for [a-h/templ](https://github.com/a-h/templ). Styled with Tailwind CSS, so BYO tailwind build.
 
-**[Examples and full documentation →](https://codypotter.github.io/templ-calendar/)**
+**[Examples and full documentation](https://codypotter.github.io/templ-calendar/)**
 
 ## Getting started
 
